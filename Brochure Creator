@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+void main() {
+  runApp(BrochureApp());
+}
+
+class BrochureApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Brochure Creator',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: BrochureHomePage(),
+    );
+  }
+}
+
+class BrochureHomePage extends StatefulWidget {
+  @override
+  _BrochureHomePageState createState() => _BrochureHomePageState();
+}
+
+class _BrochureHomePageState extends State<BrochureHomePage> {
+  final TextEditingController _textController = TextEditingController();
+  File? _image;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _createBrochure() {
+    print('Text: ${_textController.text}');
+    print('Image: ${_image?.path}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Create Brochure'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(labelText: 'Enter brochure text'),
+            ),
+            SizedBox(height: 20),
+            _image == null
+                ? Text('No image selected.')
+                : Image.file(_image!),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: Text('Select Image'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _createBrochure,
+              child: Text('Create Brochure'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
